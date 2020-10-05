@@ -81,6 +81,14 @@ function runTask() {
         });
 }
 
+function viewEmployees() {
+    var query = "SELECT * FROM employee";
+    connection.query(query, function(err, res) {
+        console.table(res);
+        runTask();
+    })
+}
+
 function addEmployee() {
     inquirer
         .prompt(
