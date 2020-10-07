@@ -153,7 +153,7 @@ function addRole() {
                 {
                     name: "title",
                     type: "input",
-                    message: "What is title for the new role?"
+                    message: "What is the title for the new role?"
                 },
                 {
                     name: "salary",
@@ -175,7 +175,7 @@ function addRole() {
             }
             connection.query(query, newRole, function(err, res) {
                 if (err) throw err;
-                viewEmployees();
+                viewRoles();
                 runTask();
             })
         });
@@ -188,4 +188,27 @@ function viewDepartments() {
         console.table(res);
         runTask();
     })
+}
+
+function addDepartment() {
+    inquirer
+        .prompt(
+            [
+                {
+                    name: "name",
+                    type: "input",
+                    message: "What is the name for the new department?"
+                }
+            ])
+        .then(function(answer) {
+            var query = "INSERT INTO department SET ?";
+            var newDepartment = {
+                name: answer.name
+            }
+            connection.query(query, newDepartment, function(err, res) {
+                if (err) throw err;
+                viewDepartments();
+                runTask();
+            })
+        });
 }
