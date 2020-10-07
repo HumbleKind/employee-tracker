@@ -12,8 +12,17 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID " + connection.threadId);
-    runTask();
+    afterConnect();
 });
+
+function afterConnect() {
+    var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.department_id, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id";
+    connection.query(query, function(err, res) {
+        if (err) throw err;
+        console.table(res);
+        runTask();
+    })
+}
 
 function runTask() {
     inquirer
