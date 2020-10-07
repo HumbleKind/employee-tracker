@@ -96,7 +96,7 @@ function addEmployee() {
                 {
                     name: "first",
                     type: "input",
-                    message: "What is the employee's first name?",
+                    message: "What is the employee's first name?"
                     // validate: function(answer) {
                     //     if (answer !== "") {
                     //         return true;
@@ -144,4 +144,39 @@ function viewRoles() {
         console.table(res);
         runTask();
     })
+}
+
+function addRole() {
+    inquirer
+        .prompt(
+            [
+                {
+                    name: "title",
+                    type: "input",
+                    message: "What is title for the new role?"
+                },
+                {
+                    name: "salary",
+                    type: "input",
+                    message: "What is the salary for the new role?"
+                },
+                {
+                    name: "department",
+                    type: "input",
+                    message: "What is the department ID for the new role?"
+                }
+            ])
+        .then(function(answer) {
+            var query = "INSERT INTO role SET ?";
+            var newRole = {
+                title: answer.title,
+                salary: answer.salary,
+                department_id: answer.department
+            }
+            connection.query(query, newRole, function(err, res) {
+                if (err) throw err;
+                viewEmployees();
+                runTask();
+            })
+        });
 }
