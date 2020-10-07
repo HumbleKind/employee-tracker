@@ -11,24 +11,27 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
+    console.clear();
     console.log("Connected as ID " + connection.threadId);
-    afterConnect();
+    companyTable();
 });
 
-function afterConnect() {
+function companyTable() {
     var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.department_id, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id";
     connection.query(query, function(err, res) {
         if (err) throw err;
+        console.clear();
+        console.log("COMPANY");
         console.table(res);
-        runTask();
+        runAction();
     })
 }
 
-function runTask() {
+function runAction() {
     inquirer
         .prompt({
             name: "action",
-            type: "rawlist",
+            type: "list",
             message: "What would you like to do?",
             choices: [
                 "View All Employees",
@@ -84,8 +87,10 @@ function viewEmployees() {
     var query = "SELECT * FROM employee";
     connection.query(query, function(err, res) {
         if (err) throw err;
+        console.clear();
+        console.log("EMPLOYEES");
         console.table(res);
-        runTask();
+        runAction();
     })
 }
 
@@ -131,18 +136,56 @@ function addEmployee() {
             }
             connection.query(query, newEmployee, function(err, res) {
                 if (err) throw err;
-                viewEmployees();
-                runTask();
+                companyTable();
             })
         });
+}
+
+function updateEmpRole() {
+    // display the employee table to help select an employee (id) to update
+    var query = "SELECT * FROM employee";
+    connection.query(query, function(err, res) {
+        if (err) throw err;
+        console.clear();
+        console.log("EMPLOYEES");
+        console.table(res);
+    
+    inquirer
+        .prompt(
+            [
+                {
+                    name: "employee",
+                    type: "input",
+                    message: "Enter the 'ID' of the employee above who's role you want to update?",
+                },
+                {
+                    name: "role",
+                    type: "input",
+                    message: "Enter the 'role ID' for the employee's new role'?",
+                }
+            ])
+        .then(function(answer) {
+            var query = "UPDATE employee SET ? WHERE ?";
+            var updateRole = [
+                { role_id: answer.role },
+                { id: answer.employee }
+            ];
+            connection.query(query, updateRole, function(err, res) {
+                if (err) throw err;
+                companyTable();
+            })
+        });
+    });
 }
 
 function viewRoles() {
     var query = "SELECT * FROM role";
     connection.query(query, function(err, res) {
         if (err) throw err;
+        console.clear();
+        console.log("ROLES");
         console.table(res);
-        runTask();
+        runAction();
     })
 }
 
@@ -176,7 +219,6 @@ function addRole() {
             connection.query(query, newRole, function(err, res) {
                 if (err) throw err;
                 viewRoles();
-                runTask();
             })
         });
 }
@@ -185,8 +227,10 @@ function viewDepartments() {
     var query = "SELECT * FROM department";
     connection.query(query, function(err, res) {
         if (err) throw err;
+        console.clear();
+        console.log("DEPARTMENTS");
         console.table(res);
-        runTask();
+        runAction();
     })
 }
 
@@ -208,7 +252,6 @@ function addDepartment() {
             connection.query(query, newDepartment, function(err, res) {
                 if (err) throw err;
                 viewDepartments();
-                runTask();
             })
         });
 }
