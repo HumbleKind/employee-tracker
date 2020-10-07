@@ -12,19 +12,9 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected as ID " + connection.threadId);
-    // afterConnection();
     runTask();
 });
 
-        // function afterConnection() {
-        //     connection.query("SELECT * FROM employee", function(err, res) {
-        //         if (err) throw err;
-        //         console.log(res);
-        //         connection.end();
-        //     });
-        // }
-
-// Use inquirer switch method to ask if adding department, roles, or employee; then repeat
 function runTask() {
     inquirer
         .prompt({
@@ -84,6 +74,7 @@ function runTask() {
 function viewEmployees() {
     var query = "SELECT * FROM employee";
     connection.query(query, function(err, res) {
+        if (err) throw err;
         console.table(res);
         runTask();
     })
@@ -108,12 +99,30 @@ function addEmployee() {
                     name: "last",
                     type: "input",
                     message: "What is the employee's last name?"
+                },
+                {
+                    name: "role",
+                    type: "input",
+                    message: "What is the employee's role ID?"
+                },
+                {
+                    name: "manager",
+                    type: "input",
+                    message: "What is the employee's manager ID?"
                 }
             ])
         .then(function(answer) {
-            var query = "INSERT INTO employee (id, first_name, last_name) VALUES (1, '" + answer.first + "', '" + answer.last + "')";
-            connection.query(query, function(err, res) {
+            // var query = "INSERT INTO employee (id, first_name, last_name) VALUES (1, '" + answer.first + "', '" + answer.last + "');
+            var query = "INSERT INTO employee SET ?";
+            var newEmployee = {
+                first_name: answer.first,
+                last_name: answer.last,
+                role_id: answer.role,
+                manager_id: answer.manager
+            }
+            connection.query(query, newEmployee, function(err, res) {
                 if (err) throw err;
+                viewEmployees();
                 runTask();
             })
         });
