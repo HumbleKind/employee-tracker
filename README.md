@@ -13,8 +13,14 @@ This is a Content Management System command-line application, utilizing Node.js 
 * [Questions](#questions)
 
 ## Installation
+1. npm install
+2. npm run start
 
 ## Usage
+![Employee Tracker](screen-shot_1.png)
+1. Enter relevant info when prompted.
+
+2. See [walk-through](https://drive.google.com/file/d/1EbnyUoG5I4TFScME-7Szjif-2otSaNs5/view) video for help.
 
 ## License
 This application is covered under the **GPL v3.0** license. Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
