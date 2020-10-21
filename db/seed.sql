@@ -1,8 +1,8 @@
 -- SEED DATA
-INSERT INTO department (name)
+INSERT INTO departments (department)
 VALUES ("Engineering"),("Finance"),("Legal"),("Sales");
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (title, salary, dep_id)
 VALUES ("Accountant", 125000, 2),
 ("Lawyer", 100000, 3),
 ("Lead Engineer", 150000, 1),
@@ -11,7 +11,7 @@ VALUES ("Accountant", 125000, 2),
 ("Salesperson", 80000, 4),
 ("Software Engineer", 120000, 1);
 
-INSERT INTO employee (first_name, last_name, role_id, manager_id)
+INSERT INTO employees (first_name, last_name, role_id, mgr_id)
 VALUES ("John", "Doe", 5, 3),
 ("Mike", "Chan", 6, 1),
 ("Ashley", "Rodriguez", 3, null),

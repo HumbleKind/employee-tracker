@@ -17,7 +17,7 @@ connection.connect(function(err) {
 });
 
 function companyTable() {
-    var query = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.department_id, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id";
+    var query = "SELECT employees.emp_id AS nID, employees.first_name, employees.last_name, roles.role_id AS tID, roles.title, departments.dep_id AS dID, departments.department, roles.salary FROM employees JOIN roles ON employees.role_id = roles.role_id JOIN departments ON roles.dep_id = departments.dep_id ORDER BY employees.emp_id ASC";
     connection.query(query, function(err, res) {
         if (err) throw err;
         console.clear();
@@ -84,7 +84,7 @@ function runAction() {
 }
 
 function viewEmployees() {
-    var query = "SELECT * FROM employee";
+    var query = "SELECT * FROM employees";
     connection.query(query, function(err, res) {
         if (err) throw err;
         console.clear();
@@ -95,6 +95,14 @@ function viewEmployees() {
 }
 
 function addEmployee() {
+    // display the employee table to review current employees
+    var query = "SELECT * FROM employees";
+    connection.query(query, function(err, res) {
+        if (err) throw err;
+        console.clear();
+        console.log("EMPLOYEES");
+        console.table(res);
+    
     inquirer
         .prompt(
             [
@@ -117,7 +125,7 @@ function addEmployee() {
                 {
                     name: "role",
                     type: "input",
-                    message: "What is the employee's role ID?"
+                    message: "What is the employee's title ID?"
                 },
                 {
                     name: "manager",
@@ -127,23 +135,24 @@ function addEmployee() {
             ])
         .then(function(answer) {
             // var query = "INSERT INTO employee (id, first_name, last_name) VALUES (1, '" + answer.first + "', '" + answer.last + "');
-            var query = "INSERT INTO employee SET ?";
+            var query = "INSERT INTO employees SET ?";
             var newEmployee = {
                 first_name: answer.first,
                 last_name: answer.last,
                 role_id: answer.role,
-                manager_id: answer.manager
+                mgr_id: answer.manager
             }
             connection.query(query, newEmployee, function(err, res) {
                 if (err) throw err;
                 companyTable();
             })
         });
+    });
 }
 
 function updateEmpRole() {
     // display the employee table to help select an employee (id) to update
-    var query = "SELECT * FROM employee";
+    var query = "SELECT * FROM employees";
     connection.query(query, function(err, res) {
         if (err) throw err;
         console.clear();
@@ -156,19 +165,19 @@ function updateEmpRole() {
                 {
                     name: "employee",
                     type: "input",
-                    message: "Enter the 'ID' of the employee above who's role you want to update?",
+                    message: "Enter the 'nID' of the employee above who's title you want to update?",
                 },
                 {
                     name: "role",
                     type: "input",
-                    message: "Enter the 'role ID' for the employee's new role'?",
+                    message: "Enter the 'ID' for the employee's new title?",
                 }
             ])
         .then(function(answer) {
-            var query = "UPDATE employee SET ? WHERE ?";
+            var query = "UPDATE employees SET ? WHERE ?";
             var updateRole = [
                 { role_id: answer.role },
-                { id: answer.employee }
+                { emp_id: answer.employee }
             ];
             connection.query(query, updateRole, function(err, res) {
                 if (err) throw err;
@@ -179,7 +188,7 @@ function updateEmpRole() {
 }
 
 function viewRoles() {
-    var query = "SELECT * FROM role";
+    var query = "SELECT * FROM roles";
     connection.query(query, function(err, res) {
         if (err) throw err;
         console.clear();
@@ -190,6 +199,13 @@ function viewRoles() {
 }
 
 function addRole() {
+    var query = "SELECT * FROM roles";
+    connection.query(queryRole, function(err, res) {
+        if (err) throw err;
+        console.clear();
+        console.log("ROLES");
+        console.table(res);
+
     inquirer
         .prompt(
             [
@@ -206,25 +222,26 @@ function addRole() {
                 {
                     name: "department",
                     type: "input",
-                    message: "What is the department ID for the new role?"
+                    message: "What is the department ID (dID) for the new role?"
                 }
             ])
         .then(function(answer) {
-            var query = "INSERT INTO role SET ?";
+            var query = "INSERT INTO roles SET ?";
             var newRole = {
                 title: answer.title,
                 salary: answer.salary,
-                department_id: answer.department
+                dep_id: answer.department
             }
             connection.query(query, newRole, function(err, res) {
                 if (err) throw err;
                 viewRoles();
             })
         });
+    });
 }
 
 function viewDepartments() {
-    var query = "SELECT * FROM department";
+    var query = "SELECT * FROM departments";
     connection.query(query, function(err, res) {
         if (err) throw err;
         console.clear();
@@ -245,9 +262,9 @@ function addDepartment() {
                 }
             ])
         .then(function(answer) {
-            var query = "INSERT INTO department SET ?";
+            var query = "INSERT INTO departments SET ?";
             var newDepartment = {
-                name: answer.name
+                department: answer.name
             }
             connection.query(query, newDepartment, function(err, res) {
                 if (err) throw err;
